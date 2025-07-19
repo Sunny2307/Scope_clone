@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import axios from 'axios'; // Import Axios
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const logoUrl = '/logo/Scope_logo.jpg';
 const bgUrl = '/images/bg.jpg';
@@ -147,7 +147,8 @@ export default function SignUp() {
 
               <div className="text-center text-sm text-gray-600">
                 Already have an account?{' '}
-                <a href="/login" className="text-teal-600 hover:text-teal-700 font-medium">Login</a>
+                <Link to="/login" className="text-teal-600 hover:text-teal-700 font-medium">Login</Link>
+                {/* <a href="/login" className="text-teal-600 hover:text-teal-700 font-medium">Login</a> */}
               </div>
             </div>
           ) : (
