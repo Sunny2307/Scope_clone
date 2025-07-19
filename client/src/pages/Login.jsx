@@ -119,7 +119,7 @@ export default function Login() {
 
           <div className="text-center text-sm text-gray-600">
             Don't have an account?{' '}
-            <Link to="/" className="text-teal-600 hover:text-teal-700 font-medium">Sign Up</Link>
+            <Link to="/signup" className="text-teal-600 hover:text-teal-700 font-medium">Sign Up</Link>
           </div>
           {message && <p className="text-center text-sm text-gray-600 mt-2">{message}</p>} {/* Display API message */}
         </form>

@@ -6,8 +6,8 @@ import StudentProfileForm from './pages/student/StudentForm.jsx'
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<SignUp />} />
-      <Route path="/login" element={<Login />} />
+      <Route path="/" element={<Login />} />
+      <Route path="/signup" element={<SignUp />} />
       <Route path="/student/StudentForm" element={<StudentProfileForm />} />
     </Routes>
   )
