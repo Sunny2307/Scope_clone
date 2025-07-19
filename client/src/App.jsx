@@ -9,7 +9,6 @@ function App() {
       <Route path="/" element={<SignUp />} />
       <Route path="/login" element={<Login />} />
       <Route path="/student/StudentForm" element={<StudentProfileForm />} />
-      {/* Add more routes here as you add more pages */}
     </Routes>
   )
 }
