@@ -11,6 +11,7 @@ import { AuthContext } from "./AuthContext";
 // CORRECTED: Use import.meta.env for Vite environment variables
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
+
 export default function AuthContextProvider({ children }) {
     const navigate = useNavigate();
 
