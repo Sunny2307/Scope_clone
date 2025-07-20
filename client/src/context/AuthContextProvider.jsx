@@ -8,6 +8,7 @@ import { AuthContext } from "./AuthContext";
  * It centralizes the logic for login, signup, OTP handling, and API calls.
  */
 
+
 // CORRECTED: Use import.meta.env for Vite environment variables
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
