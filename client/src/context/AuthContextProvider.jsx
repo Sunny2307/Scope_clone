@@ -8,7 +8,9 @@ import { AuthContext } from "./AuthContext";
  * It centralizes the logic for login, signup, OTP handling, and API calls.
  */
 
-const API_BASE_URL = process.env.VITE_API_BASE_URL;
+
+// CORRECTED: Use import.meta.env for Vite environment variables
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export default function AuthContextProvider({ children }) {
     const navigate = useNavigate();
@@ -59,6 +61,7 @@ export default function AuthContextProvider({ children }) {
         if (validateEmail(loginCredentials.email) && validatePassword(loginCredentials.password)) {
             setIsLoading(true);
             try {
+                // This will now correctly resolve to http://localhost:5000/api/auth/login
                 const response = await axios.post(`${API_BASE_URL}/api/auth/login`, loginCredentials);
                 setMessage(response.data.message);
                 // On success, you might want to navigate to a dashboard
