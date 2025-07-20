@@ -8,7 +8,7 @@ import { AuthContext } from "./AuthContext";
  * It centralizes the logic for login, signup, OTP handling, and API calls.
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_BASE_URL = process.env.VITE_API_BASE_URL;
 
 export default function AuthContextProvider({ children }) {
     const navigate = useNavigate();
