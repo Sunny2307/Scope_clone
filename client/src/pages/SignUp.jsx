@@ -8,8 +8,6 @@ import AuthContextProvider from "../context/AuthContextProvider";
  */
 export default function SignUp() {
     return (
-        <AuthContextProvider>
             <SignUpContent />
-        </AuthContextProvider>
     )
 }
