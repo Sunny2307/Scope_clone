@@ -6,7 +6,7 @@ import { AuthContext } from "./AuthContext";
 /**
  * Provides authentication-related state and functions to its children.
  * It centralizes the logic for login, signup, OTP handling, and API calls.
- * This version merges token handling and navigation logic from the previous version.
+ * This version includes the fallback "dummy token" logic for navigation.
  */
 
 // Uses Vite environment variables for the API base URL.
@@ -15,7 +15,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 export default function AuthContextProvider({ children }) {
     const navigate = useNavigate();
 
-    // --- State from your new provider ---
+    // --- State ---
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState('');
     const [errors, setErrors] = useState({ email: '', password: '' });
@@ -26,22 +26,19 @@ export default function AuthContextProvider({ children }) {
     const [otpSent, setOtpSent] = useState(false);
     const otpRefs = useRef([]);
 
-    // --- Logic added from your old provider ---
-    // State to signal that login was successful and navigation should occur.
+    // --- Logic for navigation ---
     const [loginSuccess, setLoginSuccess] = useState(false);
 
     // This effect hook listens for a successful login and then navigates.
-    // This is a reliable way to handle navigation after an async state update.
     useEffect(() => {
         if (loginSuccess) {
-            // Navigate to the desired dashboard upon successful login.
+            console.log("✅ Login success is true. Navigating to dashboard...");
             navigate('/student/dashboard');
         }
     }, [loginSuccess, navigate]);
-    // --- End of added logic ---
 
 
-    // --- Validation Logic (Unchanged) ---
+    // --- Validation Logic ---
     const validateEmail = (email) => {
         if (!email) {
             setErrors(prev => ({ ...prev, email: 'Email is required' }));
@@ -67,7 +64,7 @@ export default function AuthContextProvider({ children }) {
 
     // --- Handler Functions ---
 
-    // Login Handler (Updated with token logic)
+    // Login Handler (Updated with the old dummy token logic)
     const handleLogin = async () => {
         setTouched({ email: true, password: true });
         if (validateEmail(loginCredentials.email) && validatePassword(loginCredentials.password)) {
@@ -76,21 +73,25 @@ export default function AuthContextProvider({ children }) {
                 // API call uses the environment variable base URL.
                 const response = await axios.post(`${API_BASE_URL}/api/auth/login`, loginCredentials);
                 
-                // --- Logic added from old provider ---
-                // Check for a token in the response and save it.
+                // --- Logic restored from your old provider ---
+                // This block now includes the dummy token fallback.
                 if (response.data && response.data.token) {
+                    console.log("Token found in response. Saving to localStorage.");
                     localStorage.setItem('token', response.data.token);
                     setMessage(response.data.message || 'Login successful!');
-                    // Set loginSuccess to true to trigger the navigation effect.
-                    setLoginSuccess(true);
+                    setLoginSuccess(true); // Trigger navigation
                 } else {
-                    // Handle cases where login is successful but no token is sent.
+                    // This is the fallback logic you requested.
+                    console.warn("WARNING: No token in response. Proceeding with a dummy token for testing.");
+                    localStorage.setItem('token', 'dummy-token-for-testing');
                     setMessage(response.data.message || 'Login successful, but no token received.');
+                    setLoginSuccess(true); // Trigger navigation anyway
                 }
-                // --- End of added logic ---
+                // --- End of restored logic ---
 
             } catch (error) {
                 setMessage(error.response?.data?.error || 'An error occurred during login');
+                console.error("LOGIN FAILED: API call returned an error.", error);
             } finally {
                 setIsLoading(false);
             }
@@ -114,27 +115,20 @@ export default function AuthContextProvider({ children }) {
         }
     };
 
-    // SignUp Step 2: Verify OTP and Create User (Updated with correct navigation)
+    // SignUp Step 2: Verify OTP and Create User (Unchanged)
     const handleSignUp = async () => {
         setTouched({ email: true, password: true });
         if (validateEmail(signUpCredentials.email) && validatePassword(signUpCredentials.password)) {
             setIsLoading(true);
             try {
                 const fullOtp = otp.join('');
-                // First, verify the OTP
                 await axios.post(`${API_BASE_URL}/api/auth/verify-otp`, { email: signUpCredentials.email, otp: fullOtp });
-
-                // If OTP is correct, set the password
                 const setPasswordResponse = await axios.post(`${API_BASE_URL}/api/auth/set-password`, signUpCredentials);
                 setMessage(setPasswordResponse.data.message);
                 
-                // Reset form and navigate on success
                 setSignUpCredentials({ email: '', password: '' });
                 setOtp(['', '', '', '']);
                 setOtpSent(false);
-
-                // --- Updated Navigation from old provider ---
-                // Navigate to the student form after successful sign-up.
                 navigate('/student/StudentForm');
 
             } catch (error) {
@@ -169,11 +163,9 @@ export default function AuthContextProvider({ children }) {
         touched,
         setErrors,
         setTouched,
-        // Login
         loginCredentials,
         setLoginCredentials,
         handleLogin,
-        // Sign Up
         signUpCredentials,
         setSignUpCredentials,
         otp,
