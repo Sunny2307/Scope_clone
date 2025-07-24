@@ -1,61 +1,78 @@
 import React, { useState, useContext } from 'react';
 import { StudentContext } from '../../context/StudentContext';
-import { FiUser, FiCalendar, FiBookOpen, FiAward, FiLogOut, FiMenu, FiX } from 'react-icons/fi';
-import Footer from '../layout/Footer'; // Import the Footer component
+import { FiHome, FiUser, FiBookOpen, FiAward, FiMenu } from 'react-icons/fi';
 
-// Placeholder logo - replace with your actual logo path
-const scopeLogo = '/logo/Scope_logo.jpg';
+// Import the separated components
+import DashboardHeader from '../layout/DashboardHeader';
+import DashboardFooter from '../layout/DashboardFooter';
 
-// Reusable Header Component for the Dashboard
-const DashboardHeader = () => {
-    const { handleLogout } = useContext(StudentContext);
-    return (
-        <header className="bg-white shadow-md p-4 flex justify-between items-center z-20 shrink-0">
-            <div className="flex items-center gap-4">
-                <img src={scopeLogo} alt="Logo" className="h-10" />
-                <h1 className="text-xl font-bold text-gray-800 hidden md:block">Student Dashboard</h1>
-            </div>
-            <div className="flex items-center gap-3">
-                {/* Updated Reset Password button styling */}
-                <button className="text-sm font-semibold text-white bg-gray-600 hover:bg-gray-700 transition-colors px-4 py-2 rounded-lg shadow-sm">
-                    Reset Password
-                </button>
-                {/* Updated Logout button styling */}
-                <button
-                    onClick={handleLogout}
-                    className="flex items-center gap-2 bg-red-600 text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-red-700 transition-colors shadow-sm"
-                >
-                    <FiLogOut />
-                    <span>Logout</span>
-                </button>
-            </div>
-        </header>
-    );
-};
-
-// Reusable Sidebar Component
-const Sidebar = ({ isSidebarOpen }) => {
+// Reusable Sidebar Component (can also be moved to its own file later if needed)
+const Sidebar = ({ isSidebarOpen, onSidebarToggle }) => {
     const navItems = [
-        { name: 'Profile', icon: <FiUser /> },
-        { name: 'Apply Leave', icon: <FiCalendar /> },
-        { name: 'My Leaves', icon: <FiBookOpen /> },
-        { name: 'Scholarship', icon: <FiAward /> },
+        { name: 'Home', icon: FiHome },
+        { name: 'Profile', icon: FiUser },
+        { name: 'Enjoyed Leave', icon: FiBookOpen },
+        { name: 'Scholarship', icon: FiAward },
     ];
-    const activeItem = 'Profile'; // This can be made dynamic later with routing
+    const activeItem = 'Home';
 
     return (
-        <aside className={`bg-white transition-all duration-300 ease-in-out md:block md:w-60 lg:w-64 shrink-0 md:shadow-none shadow-lg absolute md:relative z-30 h-full ${isSidebarOpen ? 'w-64 p-4' : 'w-0 p-0 md:w-60 lg:w-64 md:p-4'} overflow-hidden`}>
-            <nav className="mt-4">
+        <aside className={`bg-white transition-all transition-width duration-500 ease-in-out h-full border-r border-gray-200 z-30 flex flex-col ${isSidebarOpen ? 'w-64' : 'w-16'} overflow-x-hidden`} style={{ minWidth: isSidebarOpen ? '16rem' : '4rem' }}>
+            <button
+                className="group p-3 flex items-start justify-start hover:bg-cyan-100"
+                onClick={onSidebarToggle}
+                style={{
+                    width: '100%',
+                    backgroundColor: 'transparent',
+                    border: 'none',
+                    outline: 'none'
+                }}
+            >
+                <FiMenu
+                    size={28}
+                    className="text-gray-700 transition-colors duration-200 group-hover:text-cyan-700"
+                />
+            </button>
+            <nav className="mt-4 flex-1">
                 <ul>
-                    {navItems.map((item) => (
-                        <li key={item.name} className="mb-2">
-                            {/* Updated link styling with larger font and new colors */}
-                            <a href="#" className={`flex items-center gap-4 p-3 rounded-lg text-lg transition-colors ${item.name === activeItem ? 'bg-teal-100 text-teal-700 font-bold' : 'text-gray-700 hover:bg-gray-100 font-semibold'}`}>
-                                {item.icon}
-                                <span>{item.name}</span>
-                            </a>
-                        </li>
-                    ))}
+                    {navItems.map((item) => {
+                        const IconComponent = item.icon;
+                        const isActive = item.name === activeItem;
+
+                        return (
+                            <li key={item.name} className="mb-2 px-2">
+                                <a
+                                    href="#"
+                                    className={`group flex items-center gap-4 p-3 rounded-lg text-lg transition-colors duration-200
+                                        ${isActive
+                                            ? 'bg-cyan-100 hover:bg-cyan-50'
+                                            : 'hover:bg-cyan-100'
+                                        }`}
+                                    style={{ justifyContent: isSidebarOpen ? 'flex-start' : 'center' }}
+                                >
+                                    <IconComponent
+                                        size={24}
+                                        className={`transition-colors duration-200
+                                            ${isActive
+                                                ? 'text-cyan-700'
+                                                : 'text-gray-700 group-hover:text-cyan-700'
+                                            }`}
+                                    />
+                                    {isSidebarOpen && (
+                                        <span
+                                            className={`whitespace-nowrap transition-colors duration-200 font-semibold
+                                                ${isActive
+                                                    ? 'text-cyan-900'
+                                                    : 'text-gray-700 group-hover:text-cyan-700'
+                                                }`}
+                                        >
+                                            {item.name}
+                                        </span>
+                                    )}
+                                </a>
+                            </li>
+                        );
+                    })}
                 </ul>
             </nav>
         </aside>
@@ -64,17 +81,17 @@ const Sidebar = ({ isSidebarOpen }) => {
 
 // Main Dashboard Content Component
 export default function DashboardContent() {
-    const { user } = useContext(StudentContext);
-    const [selectedLeaveType, setSelectedLeaveType] = useState(null);
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    // Note: StudentContext is still needed here for the user's name, dept, etc.
+    const { user } = useContext(StudentContext); 
+    const [selectedLeaveType, setSelectedLeaveType] = useState('CL');
+    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
-    // Mock data based on your original file. This would also come from your backend.
     const leaveData = {
-        CL: { balance: '12/30', history: [{ dates: '2024-11-15 to 2024-11-17', duration: '3 days', status: 'APPROVED BY DEAN' }, { dates: '2024-10-05 to 2024-10-06', duration: '2 days', status: 'PENDING' }] },
-        DL: { balance: '3/10', history: [{ dates: '2024-11-10 to 2024-11-12', duration: '3 days', status: 'PENDING' }] },
-        LWP: { balance: '2', history: [{ dates: '2024-11-05 to 2024-11-06', duration: '2 days', status: 'APPROVED BY OPERATOR' }] },
+        CL: { balance: '12/30', history: [{ dates: '2025-11-15 to 2025-11-17', duration: '3 days', status: 'APPROVED BY DEAN' }, { dates: '2025-10-05 to 2025-10-06', duration: '2 days', status: 'PENDING' }] },
+        DL: { balance: '3/10', history: [{ dates: '2025-11-10 to 2025-11-12', duration: '3 days', status: 'PENDING' }] },
+        LWP: { balance: '2', history: [{ dates: '2025-11-05 to 2025-11-06', duration: '2 days', status: 'APPROVED BY OPERATOR' }] },
     };
-    
+
     const otherScholarships = [
         { name: 'State Government Scholarship', amount: '₹15,000' },
         { name: 'Merit-Based Grant', amount: '₹5,000' },
@@ -89,79 +106,104 @@ export default function DashboardContent() {
     };
 
     return (
-        // Updated main container to ensure it fills the screen
-        <div className="w-screen h-screen bg-gray-50 flex flex-col">
+        <div className="w-screen h-screen bg-white flex flex-col">
             <DashboardHeader />
             <div className="flex flex-1 overflow-y-auto relative">
-                <Sidebar isSidebarOpen={isSidebarOpen} />
+                <Sidebar isSidebarOpen={isSidebarOpen} onSidebarToggle={() => setIsSidebarOpen(!isSidebarOpen)} />
                 <main className="flex-1 p-4 md:p-6 overflow-y-auto">
                     <div className="flex justify-between items-center mb-6">
-                         <div>
-                            <h2 className="text-2xl font-bold text-gray-800">Welcome back, {user?.name || 'Student'}!</h2>
-                            <p className="text-xs md:text-sm text-gray-500 mt-1 flex flex-wrap gap-x-2">
-                                <span>ID: {user?.collegeId || '...'}</span>
-                                <span className="hidden md:inline">|</span>
-                                <span>Dept: {user?.department || '...'}</span>
-                                <span className="hidden md:inline">|</span>
-                                <span>Guide: {user?.guide || '...'}</span>
-                            </p>
+                        <div>
+                            <h2 className="text-2xl font-bold text-gray-500 tracking-tight">Welcome, {user?.name || 'Student'} - {user?.collegeId || '...'}</h2>
                         </div>
-                        <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="md:hidden p-2 rounded-md bg-gray-200 z-40">
-                            {isSidebarOpen ? <FiX /> : <FiMenu />}
-                        </button>
+                        <div className="flex gap-2">
+                            <span className="bg-gray-100 text-gray-800 rounded-xl px-4 py-2 text-base font-semibold whitespace-nowrap">Dept: {user?.department || '...'}</span>
+                            <span className="bg-gray-100 text-gray-800 rounded-xl px-4 py-2 text-base font-semibold whitespace-nowrap">Guide: {user?.guide || '...'}</span>
+                        </div>
                     </div>
-                    <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-                        <div className="lg:col-span-3 bg-white p-6 rounded-xl shadow-sm">
-                            <h3 className="text-lg font-bold text-gray-800 mb-4">Leave Status</h3>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-stretch">
+                        <div className="lg:col-span-3 bg-white p-6 rounded-xl border border-gray-200 flex flex-col h-full min-h-[340px]">
+                            <div className="flex justify-between items-center mb-4">
+                                <h3 className="text-lg font-bold text-gray-800">Leave Status</h3>
+                                <button className="text-xs font-semibold text-white bg-black hover:bg-gray-800 transition-colors px-3 py-1 rounded-lg shadow-sm">Apply Leave</button>
+                            </div>
                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-                                {Object.entries(leaveData).map(([key, value]) => (
-                                    <div key={key} onClick={() => setSelectedLeaveType(selectedLeaveType === key ? null : key)} className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${selectedLeaveType === key ? 'border-teal-500 bg-teal-50' : 'border-gray-200 hover:border-gray-300'}`}>
-                                        <p className="font-semibold text-gray-700 text-sm">{key === 'CL' ? 'Casual Leave' : key === 'DL' ? 'Duty Leave' : 'Leave Without Pay'} ({key})</p>
-                                        <p className="text-2xl font-bold text-gray-900 mt-1">{value.balance}</p>
-                                    </div>
-                                ))}
+                                {Object.entries(leaveData).map(([key, value]) => {
+                                    const isActive = selectedLeaveType === key;
+                                    return (
+                                        <div
+                                            key={key}
+                                            onClick={() => setSelectedLeaveType(isActive ? null : key)}
+                                            className={`group p-4 rounded-lg cursor-pointer transition-all duration-200 border-2
+                                                ${isActive
+                                                    ? 'border-cyan-400 bg-cyan-50'
+                                                    : 'bg-white border-gray-200 hover:bg-cyan-50 hover:border-cyan-300'
+                                                }`}
+                                        >
+                                            <p className="font-semibold text-sm text-gray-600 transition-colors duration-200 group-hover:text-cyan-900 group-hover:font-bold">
+                                                {key === 'CL' ? 'Casual Leave' : key === 'DL' ? 'Duty Leave' : 'Leave Without Pay'} ({key})
+                                            </p>
+                                            <p className="text-2xl mt-1 font-bold text-gray-800 transition-colors duration-200 group-hover:text-cyan-700 group-hover:font-extrabold">
+                                                {value.balance}
+                                            </p>
+                                        </div>
+                                    );
+                                })}
                             </div>
                             {selectedLeaveType && (
                                 <div className="animate-fade-in">
-                                    <h4 className="font-bold text-md mb-2">{selectedLeaveType} History</h4>
-                                    <div className="overflow-x-auto rounded-lg border">
-                                        <table className="min-w-full bg-white">
+                                    <h4 className="font-bold text-md mb-2 text-gray-800">{selectedLeaveType} History</h4>
+                                    <div className="overflow-x-auto rounded-lg border bg-white">
+                                        <table className="min-w-full bg-transparent border-separate border-spacing-0">
                                             <thead className="bg-gray-50">
                                                 <tr>
-                                                    <th className="py-2 px-4 text-left text-xs font-semibold text-gray-500 uppercase">Dates</th>
-                                                    <th className="py-2 px-4 text-left text-xs font-semibold text-gray-500 uppercase">Duration</th>
-                                                    <th className="py-2 px-4 text-center text-xs font-semibold text-gray-500 uppercase">Status</th>
+                                                    <th className="py-2 px-4 text-left text-xs font-semibold text-gray-500 uppercase border-b w-[45%]">Dates</th>
+                                                    <th className="py-2 px-4 text-left text-xs font-semibold text-gray-500 uppercase border-b w-[25%]">Duration</th>
+                                                    <th className="py-2 px-4 text-center text-xs font-semibold text-gray-500 uppercase border-b w-[30%]">Status</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {leaveData[selectedLeaveType].history.map((leave, i) => (
-                                                    <tr key={i} className="border-t">
-                                                        <td className="py-3 px-4 text-sm text-gray-800">{leave.dates}</td>
-                                                        <td className="py-3 px-4 text-sm text-gray-600">{leave.duration}</td>
-                                                        <td className="py-3 px-4 text-center">
-                                                            <span className={`px-3 py-1 text-xs font-semibold rounded-full ${getStatusClass(leave.status)}`}>{leave.status}</span>
-                                                        </td>
-                                                    </tr>
-                                                ))}
+                                                {(() => {
+                                                    const history = leaveData[selectedLeaveType].history;
+                                                    const rows = [...history, ...Array(3 - history.length).fill({ dates: '-', duration: '-', status: '-' })].slice(0, 3);
+                                                    return rows.map((leave, i) => (
+                                                        <tr key={i} className="border-t hover:bg-gray-50 transition">
+                                                            <td className="py-3 px-4 text-sm text-gray-800 align-middle whitespace-nowrap">{leave.dates}</td>
+                                                            <td className="py-3 px-4 text-sm text-gray-600 align-middle whitespace-nowrap">{leave.duration}</td>
+                                                            <td className="py-3 px-4 text-center align-middle whitespace-nowrap">
+                                                                <span className={`inline-block min-w-[90px] px-3 py-1 text-xs font-semibold rounded-full ${getStatusClass(leave.status)}`}>{leave.status}</span>
+                                                            </td>
+                                                        </tr>
+                                                    ));
+                                                })()}
                                             </tbody>
                                         </table>
                                     </div>
                                 </div>
                             )}
                         </div>
-                        <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm">
-                            <h3 className="text-lg font-bold text-gray-800 mb-4">Scholarship Information</h3>
+                        <div className="lg:col-span-2 bg-white p-6 rounded-xl border border-gray-200 flex flex-col h-full min-h-[340px]">
+                            <h3 className="text-lg font-bold text-gray-800 mb-4">This Month Earning</h3>
                             <div className="space-y-4">
-                                <div className="p-4 bg-gray-50 rounded-lg border">
-                                    <div className="flex justify-between items-center text-sm text-gray-600 mb-2"><span>College Scholarship (Base)</span><span className="font-medium text-gray-800">₹30,000</span></div>
-                                    <div className="flex justify-between items-center text-sm text-red-600 mb-3"><span>LWP Deductions</span><span className="font-medium">- ₹2,000</span></div>
-                                    <div className="border-t pt-3 flex justify-between items-center text-md font-bold text-green-700"><span>Final Payout</span><span>₹28,000</span></div>
+                                <div className="p-4 bg-cyan-50 rounded-lg border border-cyan-200">
+                                    <div className="flex justify-between items-center text-base font-medium text-cyan-900 mb-2">
+                                        <span>College Scholarship (Base)</span>
+                                        <span className="font-semibold">₹30,000</span>
+                                    </div>
+                                    <div className="flex justify-between items-center text-base font-medium text-red-700 mb-3">
+                                        <span>LWP Deductions</span>
+                                        <span className="font-semibold">- ₹2,000</span>
+                                    </div>
+                                    <div className="border-t border-cyan-200 pt-3 flex justify-between items-center text-xl font-bold text-green-800">
+                                        <span>Final Payout</span>
+                                        <span>₹28,000</span>
+                                    </div>
                                 </div>
                                 <div>
-                                    <h4 className="font-semibold text-gray-700 mb-2">Other Scholarships</h4>
-                                    <div className="p-4 bg-gray-50 rounded-lg border space-y-2">
+                                    <h4 className="font-semibold text-gray-800 mb-2">Other Scholarships</h4>
+                                    <div className="p-4 bg-gray-100 rounded-lg border border-gray-200 space-y-2">
                                         {otherScholarships.map((s, i) => (
-                                            <div key={i} className="flex justify-between items-center text-sm text-gray-600"><span>{s.name}</span><span className="font-medium text-gray-800">{s.amount}</span></div>
+                                            <div key={i} className="flex justify-between items-center text-sm text-gray-800"><span>{s.name}</span><span className="font-medium text-gray-800">{s.amount}</span></div>
                                         ))}
                                     </div>
                                 </div>
@@ -170,7 +212,7 @@ export default function DashboardContent() {
                     </div>
                 </main>
             </div>
-            {/* <Footer /> */}
+            <DashboardFooter />
         </div>
     );
 }
