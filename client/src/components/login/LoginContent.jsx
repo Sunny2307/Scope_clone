@@ -32,26 +32,36 @@
             e.preventDefault();
             handleLogin();
         };
+    return (
+        <div
+            className="min-h-screen w-screen flex flex-col bg-cover bg-center"
+            style={{ backgroundImage: `url(${bgUrl})` }}
+        >
+            <main className="flex-grow w-full flex items-center justify-center p-4">
+                <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
+                    <div className="flex flex-col items-center mb-8">
+                        <img src={logoUrl} alt="Scope Logo" className="h-20 mb-4" />
+                        <h1 className="text-2xl font-bold text-gray-800 mb-1">Welcome Back</h1>
+{/*                         <p className="text-sm text-gray-600">P. D. Patel Institute of Applied Science</p> */}
+                    </div>
 
-        return (
-            <div
-                className="min-h-screen w-screen flex flex-col bg-cover bg-center"
-                style={{ backgroundImage: `url(${bgUrl})` }}
-            >
-                <main className="flex-grow w-full flex items-center justify-center p-4">
-                    <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md" style={{ maxHeight: '600px', height: 'auto', overflow: 'hidden' }}>
-                        <div className="flex flex-col items-center mb-8">
-                            {/* --- UPDATED SECTION START --- */}
-                            <div className="w- h-48 mb-4" style={{ maxHeight: '150px', overflow: 'hidden' }}>
-                                <img
-                                    src={logoUrl}
-                                    alt="Scope Logo"
-                                    className="w-full h-full object-contain"
-                                />
-                            </div>
-                            {/* --- UPDATED SECTION END --- */}
-                            <h1 className="text-2xl font-bold text-gray-800 mb-1">Welcome</h1>
-                            {/* <p className="text-sm text-gray-600">P. D. Patel Institute of Applied Science</p> */}
+                    <form className="w-full flex flex-col gap-6" onSubmit={handleSubmit}>
+                        <div className="flex flex-col gap-2">
+                            <label htmlFor="email" className="text-sm font-medium text-gray-800">Email</label>
+                            <input
+                                id="email"
+                                name="email"
+                                type="email"
+                                placeholder="Enter your charusat email"
+                                value={loginCredentials.email}
+                                onChange={handleChange}
+                                onBlur={() => setTouched(prev => ({...prev, email: true }))}
+                                className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:border-teal-500 bg-white text-black transition-colors ${touched.email && errors.email ? 'border-red-500' : 'border-gray-300'}`}
+                                aria-describedby="email-error"
+                            />
+                            {touched.email && errors.email && (
+                                <p id="email-error" className="text-sm text-red-600 mt-1">{errors.email}</p>
+                            )}
                         </div>
 
                         <form className="w-full flex flex-col gap-6" onSubmit={handleSubmit}>
