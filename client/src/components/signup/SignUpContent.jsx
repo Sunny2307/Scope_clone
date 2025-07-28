@@ -49,7 +49,7 @@ export default function SignUpContent() {
                     <div className="flex flex-col items-center mb-8">
                         <img src={logoUrl} alt="Scope Logo" className="h-20 mb-4" />
                         <h1 className="text-2xl font-bold text-gray-800 mb-1">Create Account</h1>
-                        <p className="text-sm text-gray-600">P. D. Patel Institute of Applied Science</p>
+{/*                         <p className="text-sm text-gray-600">P. D. Patel Institute of Applied Science</p> */}
                     </div>
 
                     <form className="w-full flex flex-col gap-6" onSubmit={handleSubmit}>
