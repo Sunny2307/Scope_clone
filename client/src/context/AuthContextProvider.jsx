@@ -29,6 +29,8 @@ export default function AuthContextProvider({ children }) {
             console.log("✅ Condition MET. Calling navigate('/student/dashboard')...");
 
             navigate('/student/dashboard');
+            // Reset loginSuccess to false after navigation to prevent continuous redirects
+            setLoginSuccess(false);
         } else {
             console.log("-> Condition NOT met. Not navigating.");
         }

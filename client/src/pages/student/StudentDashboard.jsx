@@ -12,6 +12,7 @@ export default function StudentDashboard() {
 
     // This function defines what happens when the button is clicked
     const handleApplyLeaveClick = () => {
+        console.log('Apply Leave button clicked!'); // Debug log
         navigate('/student/apply-leave');
     };
 
