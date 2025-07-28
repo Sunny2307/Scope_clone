@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import EnjoyedLeaveContent from '../../components/student/EnjoyedLeaveContent';
 import DashboardHeader from '../../components/layout/DashboardHeader';
 import DashboardFooter from '../../components/layout/DashboardFooter';
-import Sidebar from '../../components/layout/sidebar';
+import Sidebar from '../../components/layout/Sidebar';
 
 export default function EnjoyedLeavePage() {
     const navigate = useNavigate();
