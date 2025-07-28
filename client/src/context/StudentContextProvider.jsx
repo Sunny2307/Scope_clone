@@ -11,10 +11,10 @@ export default function StudentContextProvider({ children }) {
         const token = localStorage.getItem('token');
         if (token) {
             const staticUserData = {
-                name: 'Rahul Patel',
-                collegeId: '20DCS001',
-                department: 'Computer Science & Engineering',
-                guide: 'Dr. Priya Sharma'
+                name: 'Sunny Radadiya',
+                collegeId: '23CE122',
+                department: 'Computer Engineering',
+                guide: 'Ronak R. Patel'
             };
             setUser(staticUserData);
             setIsLoading(false);
