@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 // Import layout components (assuming they exist in your project structure)
 import DashboardHeader from '../layout/DashboardHeader';
 import DashboardFooter from '../layout/DashboardFooter';
-import Sidebar from '../layout/sidebar'; // Adjusted import to match the new file structure
+import Sidebar from '../layout/Sidebar'; // Adjusted import to match the new file structure
 
 
 // --- Helper Icon Components (using inline SVG for simplicity) ---
