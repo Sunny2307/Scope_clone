@@ -7,6 +7,9 @@ import { AuthContext } from "./AuthContext";
  * Provides authentication-related state and functions to its children.
  * This is your full, original code with the definitive fix applied.
  */
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 export default function AuthContextProvider({ children }) {
     const navigate = useNavigate();
 
@@ -31,6 +34,8 @@ export default function AuthContextProvider({ children }) {
         if (loginSuccess) {
             console.log("✅ Condition MET. Calling navigate('/student/dashboard')...");
             navigate('/student/dashboard');
+            // Reset loginSuccess to false after navigation to prevent continuous redirects
+            setLoginSuccess(false);
         } else {
             console.log("-> Condition NOT met. Not navigating.");
         }
