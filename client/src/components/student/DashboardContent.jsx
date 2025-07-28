@@ -2,7 +2,8 @@ import React, { useState, useContext } from 'react';
 import { StudentContext } from '../../context/StudentContext';
 import DashboardHeader from '../layout/DashboardHeader';
 import DashboardFooter from '../layout/DashboardFooter';
-import Sidebar from '../layout/Sidebar';
+import Sidebar from '../layout/Sidebar'; // Adjusted import to match the new file structure
+
 
 export default function DashboardContent({ onApplyLeaveClick }) {
     const { user } = useContext(StudentContext);

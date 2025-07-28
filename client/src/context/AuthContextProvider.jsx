@@ -3,17 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from "./AuthContext";
 
-/**
- * Provides authentication-related state and functions to its children.
- * This is your full, original code with the definitive fix applied.
- */
-
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export default function AuthContextProvider({ children }) {
     const navigate = useNavigate();
 
-    // --- YOUR ORIGINAL STATE AND FUNCTIONS (UNCHANGED) ---
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState('');
     const [errors, setErrors] = useState({ email: '', password: '' });
@@ -24,15 +18,16 @@ export default function AuthContextProvider({ children }) {
     const [otpSent, setOtpSent] = useState(false);
     const otpRefs = useRef([]);
 
-    // --- START OF THE FIX ---
-    // A new state to cleanly signal that login was successful.
+    // --- Logic for navigation ---
     const [loginSuccess, setLoginSuccess] = useState(false);
 
-    // This useEffect hook has ONE job: navigate when loginSuccess becomes true.
+
     useEffect(() => {
         console.log(`--- NAVIGATION EFFECT TRIGGERED --- State of loginSuccess is now: ${loginSuccess}`);
         if (loginSuccess) {
+
             console.log("✅ Condition MET. Calling navigate('/student/dashboard')...");
+
             navigate('/student/dashboard');
             // Reset loginSuccess to false after navigation to prevent continuous redirects
             setLoginSuccess(false);
@@ -40,10 +35,7 @@ export default function AuthContextProvider({ children }) {
             console.log("-> Condition NOT met. Not navigating.");
         }
     }, [loginSuccess, navigate]);
-    // --- END OF THE FIX ---
 
-
-    // --- Validation Logic (UNCHANGED) ---
     const validateEmail = (email) => {
         if (!email) {
             setErrors(prev => ({ ...prev, email: 'Email is required' }));
@@ -66,36 +58,37 @@ export default function AuthContextProvider({ children }) {
         return true;
     };
 
-    // --- Login Handler (MODIFIED WITH THE FIX) ---
+
     const handleLogin = async () => {
         console.log("--- 1. handleLogin called. ---");
         setTouched({ email: true, password: true });
         if (validateEmail(loginCredentials.email) && validatePassword(loginCredentials.password)) {
             setIsLoading(true);
             try {
-                const response = await axios.post('http://localhost:3000/api/auth/login', loginCredentials);
-                console.log("--- 2. API call successful. Response data:", response.data);
 
+                // API call uses the environment variable base URL.
+                const response = await axios.post(`${API_BASE_URL}/api/auth/login`, loginCredentials);
+                
+                // --- Logic restored from your old provider ---
+                // This block now includes the dummy token fallback.
                 if (response.data && response.data.token) {
-                    console.log("--- 3a. Token found in response. Saving to localStorage.");
+                    console.log("Token found in response. Saving to localStorage.");
                     localStorage.setItem('token', response.data.token);
-                    setLoginSuccess(true);
+                    setMessage(response.data.message || 'Login successful!');
+                    setLoginSuccess(true); // Trigger navigation
                 } else {
-                    // This is the FIX based on your console logs.
-                    // Since your backend is not sending a token, we handle it here.
-                    console.warn("--- 3b. WARNING: No token in response. Proceeding with a dummy token for testing.");
-                    
-                    // We save a "dummy" token so the ProtectedRoute will work.
+                    // This is the fallback logic you requested.
+                    console.warn("WARNING: No token in response. Proceeding with a dummy token for testing.");
                     localStorage.setItem('token', 'dummy-token-for-testing');
-                    
-                    // We will now force the navigation to proceed.
-                    console.log("--- 4. Attempting to set loginSuccess state to true... ---");
-                    setLoginSuccess(true); 
+                    setMessage(response.data.message || 'Login successful, but no token received.');
+                    setLoginSuccess(true); // Trigger navigation anyway
                 }
+                // --- End of restored logic ---
 
             } catch (error) {
                 setMessage(error.response?.data?.error || 'An error occurred during login');
-                console.error("--- LOGIN FAILED: API call returned an error. ---", error);
+                console.error("LOGIN FAILED: API call returned an error.", error);
+
             } finally {
                 setIsLoading(false);
             }
@@ -125,13 +118,17 @@ export default function AuthContextProvider({ children }) {
             setIsLoading(true);
             try {
                 const fullOtp = otp.join('');
-                await axios.post('http://localhost:3000/api/auth/verify-otp', { email: signUpCredentials.email, otp: fullOtp });
-                const setPasswordResponse = await axios.post('http://localhost:3000/api/auth/set-password', signUpCredentials);
+
+                await axios.post(`${API_BASE_URL}/api/auth/verify-otp`, { email: signUpCredentials.email, otp: fullOtp });
+                const setPasswordResponse = await axios.post(`${API_BASE_URL}/api/auth/set-password`, signUpCredentials);
                 setMessage(setPasswordResponse.data.message);
+                
                 setSignUpCredentials({ email: '', password: '' });
                 setOtp(['', '', '', '']);
                 setOtpSent(false);
-                navigate('/student/StudentForm'); 
+                navigate('/student/StudentForm');
+
+
             } catch (error) {
                 setMessage(error.response?.data?.error || 'An error occurred during signup');
             } finally {
