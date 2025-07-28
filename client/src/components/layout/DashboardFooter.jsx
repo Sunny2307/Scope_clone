@@ -4,7 +4,7 @@ import { PiInfo } from 'react-icons/pi';
 
 const DashboardFooter = () => {
   return (
-    <footer className="w-full text-center p-4 shrink-0 border-t border-gray-200 bg-white text-gray-800">
+    <footer className="w-full text-center p-2 shrink-0 border-t border-gray-200 bg-white text-gray-800">
       © Copyright CSPIT - CHARUSAT
       <span className="font-light px-2">|</span>
       All rights reserved

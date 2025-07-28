@@ -1,9 +1,19 @@
+// src/pages/student/StudentDashboard.jsx
+
 import React, { useContext } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import DashboardContent from '../../components/student/DashboardContent';
 import { StudentContext } from '../../context/StudentContext';
 
+// The 'onApplyLeaveClick' prop is removed from here
 export default function StudentDashboard() {
     const { isLoading } = useContext(StudentContext);
+    const navigate = useNavigate(); // Get the navigate function from the hook
+
+    // This function defines what happens when the button is clicked
+    const handleApplyLeaveClick = () => {
+        navigate('/student/apply-leave');
+    };
 
     if (isLoading) {
         return (
@@ -13,5 +23,6 @@ export default function StudentDashboard() {
         );
     }
 
-    return <DashboardContent />;
+    // Pass the newly created handler to the DashboardContent component
+    return <DashboardContent onApplyLeaveClick={handleApplyLeaveClick} />;
 }

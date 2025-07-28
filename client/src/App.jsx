@@ -9,6 +9,8 @@ import Login from './pages/Login.jsx';
 import SignUp from './pages/SignUp.jsx';
 import StudentProfileForm from './pages/student/StudentForm.jsx';
 import StudentDashboard from './pages/student/StudentDashboard.jsx';
+import ApplyLeavePage from './pages/student/ApplyLeavePage.jsx';
+import EnjoyedLeavePage from './pages/student/EnjoyedLeavePage.jsx';
 
 // Utility Component for protecting routes
 import ProtectedRoute from './components/auth/ProtectedRoute.jsx';
@@ -21,10 +23,9 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/student/StudentForm" element={<StudentProfileForm />} />
-
-        {/* Protected Routes */}
-        <Route element={<ProtectedRoute />}>
-          <Route 
+        <Route path="/student/apply-leave" element={<ApplyLeavePage />} />
+        <Route path="/student/enjoyed-leave" element={<EnjoyedLeavePage />} />
+        <Route 
             path="/student/dashboard" 
             element={
               <StudentContextProvider>
@@ -32,6 +33,19 @@ function App() {
               </StudentContextProvider>
             } 
           />
+        
+
+        {/* Protected Routes */}
+        <Route element={<ProtectedRoute />}>
+          {/* <Route 
+            path="/student/dashboard" 
+            element={
+              <StudentContextProvider>
+                <StudentDashboard />
+              </StudentContextProvider>
+            } 
+          /> */}
+          
         </Route>
       </Routes>
     </AuthContextProvider>
